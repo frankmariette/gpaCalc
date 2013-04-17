@@ -1,7 +1,14 @@
 require_relative 'gpaClasses.rb'
 require 'yaml'
 
-Dir.chdir './users'
+folder_check = File.directory?('./users')
+
+if folder_check
+  Dir.chdir './users'
+else
+  Dir.mkdir 'users'
+  Dir.chdir './users'
+end
 
 
 login = true
@@ -25,7 +32,7 @@ while login
       student = YAML::load( File.open( "#{filename.downcase}.txt" ) )
       break
     when 3 #Exit
-      login = false
+      exit
     else
       puts "Not a valid response."
   end
@@ -34,7 +41,7 @@ end
 # Starts the program
 run = true
 while run
-  options = {one: "1. Add Course", two: "2. Delete Course", three: "3. Calclate GPA", 
+  options = {one: "1. Add Course", two: "2. Delete Course", three: "3. Display GPA", 
                four: "4. Display Courses", five: "5. Exit"}
   puts ("What would you like to do?") 
   options.each{|key, value| puts value}
@@ -45,7 +52,7 @@ while run
     when 1 # Add Course
       puts "What is the name of the course?"
       name = gets.chomp
-      name = name.capitalize
+      name = name.split(' ').map { |w| w.capitalize  }.join(' ')
 
       puts("What grade did you receive?")
       grade = gets.chomp
@@ -66,7 +73,7 @@ while run
       File.open "#{student.name.downcase}.txt", 'w' do |f|
           f.write student.to_yaml
       end
-      run = false
+      exit
     else 
       puts("Not a Valid choice\n")
     end
