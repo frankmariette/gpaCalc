@@ -1,9 +1,10 @@
 class Student
-  attr_accessor :courses
+  attr_accessor :name, :courses, :gpa
 
   def initialize name
     @name = name
     @courses = []
+    @gpa = 0.0
   end
 
   def add_class course
@@ -16,7 +17,7 @@ class Student
     name = name.capitalize
 
     @courses.each do |course|
-      if course.instance_variable_get(:@name) == name
+      if course.name == name
         @courses.delete(course)
         puts "#{name} has been deleted!"
       else
@@ -35,11 +36,13 @@ class Student
   def calculate_gpa 
     points, hours = 0, 0
     @courses.each do |course|
-      points = points + course.instance_variable_get(:@gradePoints)
-      hours  = hours  + course.instance_variable_get(:@creditHours)
+      points = points + course.gradePoints
+      hours  = hours  + course.creditHours
     end
 
     gpa = points / hours
+
+    @gpa = gpa
 
     puts "Your GPA is: #{gpa}"
 
@@ -51,19 +54,12 @@ end
 
 
 class Course
-	attr_accessor :creditHours, :grade, :gradePoints
+	attr_reader :name, :creditHours, :gradePoints
   
-  def initialize
-      puts "What is the name of the course?"
-      @name = gets.chomp
-      @name = @name.capitalize
-      puts("What grade did you receive?")
-      @grade = gets.chomp
-      @grade = @grade.upcase
-      puts("How many credit hours was the course?")
-      @creditHours = gets.chomp
-      @creditHours = @creditHours.to_i
-
+  def initialize name, grade, creditHours
+      @name = name
+      @grade = grade
+      @creditHours = creditHours
       grade_conversion
   end
 

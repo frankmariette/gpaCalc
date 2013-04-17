@@ -1,7 +1,36 @@
 require_relative 'gpaClasses.rb'
+require 'yaml'
+
+Dir.chdir './users'
 
 
-student = Student.new("Frank")
+login = true
+
+while login
+  login_menu = {one: "1. New Student", two: "2. Existing Student", three: "3. Exit"}
+
+  login_menu.each {|key,value| puts value}
+  login_response = gets.chomp
+  puts
+
+  case login_response.to_i
+    when 1 #New Student
+      puts "What is your name?"
+      name = gets.chomp
+      student = Student.new(name)
+      break
+    when 2 #Existing student
+      puts "What is your name?"
+      filename = gets.chomp
+      student = YAML::load( File.open( "#{filename.downcase}.txt" ) )
+      break
+    when 3 #Exit
+      login = false
+    else
+      puts "Not a valid response."
+  end
+end
+
 # Starts the program
 run = true
 while run
@@ -14,7 +43,19 @@ while run
 
   case response.to_i
     when 1 # Add Course
-      student.add_class(Course.new)
+      puts "What is the name of the course?"
+      name = gets.chomp
+      name = name.capitalize
+
+      puts("What grade did you receive?")
+      grade = gets.chomp
+      grade = grade.capitalize
+
+      puts("How many credit hours was the course?")
+      creditHours = gets.chomp
+      creditHours =creditHours.to_i
+
+      student.add_class(Course.new(name, grade, creditHours))
     when 2 # Delete Course
      student.delete_class
     when 3 # Calculate GPA
@@ -22,6 +63,9 @@ while run
     when 4 # Display Courses
      schedule = student.display
     when 5 # Exit
+      File.open "#{student.name.downcase}.txt", 'w' do |f|
+          f.write student.to_yaml
+      end
       run = false
     else 
       puts("Not a Valid choice\n")
